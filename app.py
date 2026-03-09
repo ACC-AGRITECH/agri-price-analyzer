@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import os
 import urllib.request
-import base64  # 이미지를 HTML에 찰싹 붙이기 위해 추가된 모듈
+import base64
 
 # ---------------------------------------------------------
 # 1. 클라우드 서버용 한글 폰트 자동 세팅 (나눔고딕)
@@ -28,14 +28,12 @@ def load_data():
     df['연도'] = df['날짜'].dt.year
     df['월'] = df['날짜'].dt.month
 
-    # [핵심] 연도별 실제 도매/소매 평균가 추세
     history_cabbage = {2016: 3500, 2017: 3200, 2018: 3800, 2019: 2800, 2020: 4500, 2021: 3300, 2022: 5000, 2023: 4000, 2024: 5500, 2025: 4500}
     history_radish = {2016: 1800, 2017: 1700, 2018: 2000, 2019: 1500, 2020: 2500, 2021: 1800, 2022: 2800, 2023: 2000, 2024: 3000, 2025: 2200}
     history_onion = {2016: 1200, 2017: 1800, 2018: 800, 2019: 700, 2020: 1200, 2021: 1300, 2022: 1500, 2023: 2200, 2024: 1800, 2025: 1600}
     history_apple = {2016: 18000, 2017: 17500, 2018: 19000, 2019: 18500, 2020: 23000, 2021: 22000, 2022: 24000, 2023: 29000, 2024: 38000, 2025: 32000}
     history_rice = {2016: 36000, 2017: 35000, 2018: 45000, 2019: 48000, 2020: 50000, 2021: 55000, 2022: 45000, 2023: 48000, 2024: 45000, 2025: 44000}
 
-    # [핵심] 품목별 월별 계절성 지수
     season_cabbage = {1:0.8, 2:0.9, 3:0.9, 4:0.8, 5:0.7, 6:0.7, 7:1.1, 8:1.5, 9:1.6, 10:1.2, 11:0.9, 12:0.8}
     season_radish = {1:0.8, 2:0.9, 3:0.9, 4:0.8, 5:0.8, 6:0.7, 7:1.0, 8:1.3, 9:1.5, 10:1.2, 11:0.9, 12:0.8}
     season_onion = {1:1.2, 2:1.2, 3:1.1, 4:1.0, 5:0.8, 6:0.7, 7:0.8, 8:0.9, 9:1.0, 10:1.0, 11:1.1, 12:1.1}
@@ -61,7 +59,7 @@ items = ['배추(1포기)', '무(1개)', '양파(1kg)', '사과(10개)', '쌀(20
 # ---------------------------------------------------------
 st.set_page_config(page_title="농산물 가격 분석", layout="wide")
 
-# ★ 화면 최상단 로고와 타이틀 (절대 줄바꿈 되지 않도록 HTML 본드로 고정) ★
+# ★ 화면 최상단 로고와 타이틀 (깨짐 방지 고정) ★
 def get_image_base64(image_path):
     if os.path.exists(image_path):
         with open(image_path, "rb") as img_file:
@@ -127,13 +125,14 @@ with col_metric3:
 
 st.write("") 
 
-# ★ 2. 그래프 영역 (위/아래 넓게 배치) ★
+# ★ 2. 그래프 영역 (반응형 설정 적용: use_container_width=True) ★
 st.markdown(f"### ① {selected_item} 10년 가격 장기 추이")
 fig1, ax1 = plt.subplots(figsize=(12, 4)) 
 ax1.plot(df['날짜'], df[selected_item], color='tomato', linewidth=1.5)
 ax1.set_ylabel("가격 (원)")
 ax1.grid(True, linestyle='--', alpha=0.6)
-st.pyplot(fig1)
+# 여기서 use_container_width=True 가 화면 너비에 맞춰 유연하게 조절해주는 마법입니다!
+st.pyplot(fig1, use_container_width=True)
 
 st.write("") 
 st.divider() 
@@ -149,7 +148,8 @@ ax2.set_xticklabels([f"{m}월" for m in range(1, 13)])
 ax2.set_ylabel("가격 (원)")
 ax2.legend()
 ax2.grid(True, linestyle='--', alpha=0.6)
-st.pyplot(fig2)
+# 여기서도 use_container_width=True 를 적용했습니다.
+st.pyplot(fig2, use_container_width=True)
 
 st.divider()
 
